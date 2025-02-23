@@ -60,7 +60,45 @@ function movePipes() {
     requestAnimationFrame(movePipes);
 }
 
+function createPipe() {
+    if (game_state !== 'Play') return;
+    if (pipe_separation > 115) {
+        pipe_separation = 0;
+        const gap = 65; 
+        const maxTop = 60 - gap; 
+        const pipe_posi = Math.floor(Math.random() * maxTop); 
+        const pipe_top = createPipeElement(pipe_posi + 'vh');
+        const pipe_bottom = createPipeElement((pipe_posi + gap) + 'vh', true);
+        document.body.appendChild(pipe_top);
+        document.body.appendChild(pipe_bottom);
+    }
+    pipe_separation++;
+    requestAnimationFrame(createPipe);
+}
 
+function createPipeElement(top, score = false) {
+    const pipe = document.createElement('div');
+    pipe.className = 'pipe_sprite';
+    pipe.style.top = top;
+    pipe.style.left = '100vw';
+    if (score) pipe.increase_score = true;
+    return pipe;
+}
+
+function detectCollision(bird_props, pipe_props) {
+    return (
+        bird_props.left < pipe_props.left + pipe_props.width &&
+        bird_props.left + bird_props.width > pipe_props.left &&
+        bird_props.top < pipe_props.top + pipe_props.height &&
+        bird_props.top + bird_props.height > pipe_props.top
+    );
+}
+
+function endGame() {
+    game_state = 'End';
+    message.innerHTML = 'Press Enter To Restart';
+    message.style.left = '28vw';
+}
 
 
 
